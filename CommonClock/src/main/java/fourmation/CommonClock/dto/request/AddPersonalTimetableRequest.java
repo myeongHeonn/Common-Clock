@@ -1,4 +1,4 @@
-package fourmation.CommonClock.dto;
+package fourmation.CommonClock.dto.request;
 
 import fourmation.CommonClock.domain.PersonalTimetable;
 import fourmation.CommonClock.domain.Team;
