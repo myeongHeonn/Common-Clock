@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "team_id", updatable = false)
     private Long id;
 
     @Column(name = "email", nullable = false)
