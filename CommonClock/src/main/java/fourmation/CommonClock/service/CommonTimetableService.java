@@ -34,6 +34,11 @@ public class CommonTimetableService {
         return commonTimetableRepository.save(commonTimetable);
     }
 
+    public CommonTimetable findById(Long id) {
+        return commonTimetableRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + id));
+    }
+
     private CommonTimetable calculateCommonTimetable(List<PersonalTimetable> timetables, Team team) {
         boolean[] commonMonday = new boolean[24];
         boolean[] commonTuesday = new boolean[24];

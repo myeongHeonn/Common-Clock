@@ -1,10 +1,12 @@
 package fourmation.CommonClock.controller;
 
 import fourmation.CommonClock.domain.CommonTimetable;
+import fourmation.CommonClock.dto.response.CommonTimetableResponse;
 import fourmation.CommonClock.service.CommonTimetableService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +21,12 @@ public class CommonTimetableController {
     public ResponseEntity<CommonTimetable> addCommonTimetable(@PathVariable Long teamId) {
         CommonTimetable savedCommonTimetable = commonTimetableService.save(teamId);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCommonTimetable);
+    }
+
+    @GetMapping("/common/{commonTimetableId}")
+    public ResponseEntity<CommonTimetableResponse> findCommonTimetable(@PathVariable Long commonTimetableId) {
+        CommonTimetable commonTimetable = commonTimetableService.findById(commonTimetableId);
+        return ResponseEntity.ok().body(new CommonTimetableResponse(commonTimetable));
     }
 
 }
