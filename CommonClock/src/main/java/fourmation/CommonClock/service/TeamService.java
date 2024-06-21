@@ -20,4 +20,15 @@ public class TeamService {
                 .password(dto.getPassword())
                 .build()).getId();
     }
+
+    public TeamLoginResponse login(TeamLoginRequest dto) {
+        Team team = teamRepository.findByLoginId(dto.getLoginId())
+                .orElseThrow(() -> new IllegalArgumentException("not found: " + dto.getLoginId()));
+
+        if (!team.getPassword().equals(dto.getPassword())) {
+            throw new IllegalArgumentException("아이디와 비밀번호가 일치하지 않습니다.");
+        }
+
+        return TeamLoginResponse.builder().teamId(team.getId()).build();
+    }
 }
