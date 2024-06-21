@@ -27,7 +27,7 @@ public class TeamController {
         return ResponseEntity.status(HttpStatus.CREATED).body(teamPk);
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<TeamLoginResponse> login(@RequestBody TeamLoginRequest request) {
         TeamLoginResponse teamLoginResponse = teamService.login(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(teamLoginResponse);
