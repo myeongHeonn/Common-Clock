@@ -16,7 +16,7 @@ public class CommonTimetable {
     @Column(name = "common_id", updatable = false)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "team_id")
     private Team team;
 
