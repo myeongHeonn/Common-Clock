@@ -6,6 +6,7 @@ import fourmation.CommonClock.common.ApiResponseGenerator;
 import fourmation.CommonClock.common.SuccessMessage;
 import fourmation.CommonClock.dto.request.AppendPersonalTimeTableRequestDTO;
 import fourmation.CommonClock.dto.response.AppendPersonalTimeTableResponseDTO;
+import fourmation.CommonClock.dto.response.EventListResponseDTO;
 import fourmation.CommonClock.dto.response.GetMainResponseDTO;
 import fourmation.CommonClock.service.TimetableService;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,14 @@ public class TimetableController {
     public ApiResponse<SuccessBody<GetMainResponseDTO>> getMain(@PathVariable Long teamPk){
         GetMainResponseDTO getMainResponseDTO = timetableService.getMain(teamPk);
         return ApiResponseGenerator.success(getMainResponseDTO, HttpStatus.OK, SuccessMessage.CREATE);
+    }
+
+    @GetMapping("/personal/{teamPk}/{personalName}")
+    public ApiResponse<SuccessBody<EventListResponseDTO>> getCalendar(
+        @PathVariable Long teamPk, @PathVariable String personalName
+    ){
+        EventListResponseDTO eventListResponseDTO = timetableService.getMonthCalender(teamPk, personalName);
+        return ApiResponseGenerator.success(eventListResponseDTO, HttpStatus.OK, SuccessMessage.CREATE);
     }
 
 }

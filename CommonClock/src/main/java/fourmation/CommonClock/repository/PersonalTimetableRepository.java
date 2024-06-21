@@ -6,5 +6,6 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PersonalTimetableRepository extends JpaRepository<PersonalTimetable, Long> {
-    public List<PersonalTimetable> findPersonalTimetablesByTeamTimetable(TeamTimetable teamTimetable);
+    List<PersonalTimetable> findPersonalTimetablesByTeamTimetable(TeamTimetable teamTimetable);
+    PersonalTimetable findPersonalTimetableByName(String name);
 }
