@@ -63,6 +63,7 @@ public class TimetableService {
         // Event 리스트를 EventResponseDTO 리스트로 변환
         List<EventResponseDTO> eventResponseDTOList = eventList.stream()
             .map(event -> new EventResponseDTO(
+                event.getId(),
                 event.isAllDay(),
                 event.getTitle(),
                 event.getStart(),
@@ -86,6 +87,7 @@ public class TimetableService {
 
         List<EventResponseDTO> eventResponseDTOList = eventList.stream()
             .map(event -> new EventResponseDTO(
+                event.getId(),
                 event.isAllDay(),
                 event.getTitle(),
                 event.getStart(),
