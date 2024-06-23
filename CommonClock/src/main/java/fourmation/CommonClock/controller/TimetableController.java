@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +33,11 @@ public class TimetableController {
         AppendPersonalTimeTableResponseDTO appendPersonalTimeTableResponseDTO = new AppendPersonalTimeTableResponseDTO(personalPk);
 
         return ApiResponseGenerator.success(appendPersonalTimeTableResponseDTO,HttpStatus.OK, SuccessMessage.CREATE);
+    }
+    @DeleteMapping("/personal/{teamPk}/{personalName}")
+    public ApiResponse<SuccessBody<Void>> deletePersonalTimeTable(@PathVariable Long teamPk, @PathVariable String personalName){
+        timetableService.deletePersonalTimetable(teamPk, personalName);
+        return ApiResponseGenerator.success(HttpStatus.OK, SuccessMessage.DELETE);
     }
 
     @GetMapping("/personal/{teamPk}")

@@ -11,6 +11,7 @@ import fourmation.CommonClock.repository.EventRepository;
 import fourmation.CommonClock.repository.PersonalTimetableRepository;
 import fourmation.CommonClock.repository.TeamRepository;
 import fourmation.CommonClock.repository.TeamTimetableRepository;
+import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -99,6 +100,22 @@ public class TimetableService {
             .toList();
         return new EventListResponseDTO(eventResponseDTOList);
     }
+    @Transactional
+    public void deletePersonalTimetable(Long teamPk, String personalName) {
+        List<PersonalTimetable> personalTimetableList = getAllPersonalTimetableByTeamTimetable(teamPk);
+
+        // personalName과 일치하는 PersonalTimetable 객체를 찾음
+        PersonalTimetable personalTimetable = personalTimetableList.stream()
+            .filter(pt -> pt.getName().equals(personalName))
+            .findFirst()
+            .orElse(null);
+
+        if (personalTimetable == null) {
+            return;
+        }
+        eventRepository.deleteByPersonalTimetable(personalTimetable);
+        personalTimetableRepository.delete(personalTimetable);
+    }
 
     private List<PersonalTimetable> getAllPersonalTimetableByTeamTimetable(Long teamPk){
         TeamTimetable teamTimetable = getTeamTimetable(teamPk);
@@ -108,5 +125,6 @@ public class TimetableService {
         Team team = teamRepository.findById(teamPk).orElseThrow(() -> new NoSuchElementException("없음"));
         return teamTimetableRepository.findTeamTimetableByTeam(team);
     }
+
 
 }
