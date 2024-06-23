@@ -28,9 +28,11 @@ public class TimetableService {
 
     public Long createPersonalTimeTable(Long teamPk){
         TeamTimetable teamTimetable = getTeamTimetable(teamPk);
+
+        int countPersonalTable = getAllPersonalTimetableByTeamTimetable(teamPk).size();
         PersonalTimetable personalTimetable = PersonalTimetable
             .builder()
-            .name("user")
+            .name("user" + countPersonalTable)
             .teamTimetable(teamTimetable)
             .build();
         return personalTimetableRepository.save(personalTimetable).getId();
