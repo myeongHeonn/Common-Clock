@@ -41,11 +41,16 @@ public class TimetableController {
     }
 
     @GetMapping("/personal/{teamPk}/{personalName}")
-    public ApiResponse<SuccessBody<EventListResponseDTO>> getCalendar(
+    public ApiResponse<SuccessBody<EventListResponseDTO>> getPersonalCalendar(
         @PathVariable Long teamPk, @PathVariable String personalName
     ){
-        EventListResponseDTO eventListResponseDTO = timetableService.getMonthCalender(teamPk, personalName);
+        EventListResponseDTO eventListResponseDTO = timetableService.getPersonalCalender(teamPk, personalName);
         return ApiResponseGenerator.success(eventListResponseDTO, HttpStatus.OK, SuccessMessage.CREATE);
     }
 
+    @GetMapping("/team/{teamPk}")
+    public ApiResponse<SuccessBody<EventListResponseDTO>> getTeamCalendar(@PathVariable Long teamPk){
+        EventListResponseDTO eventListResponseDTO = timetableService.getTeamCalender(teamPk);
+        return ApiResponseGenerator.success(eventListResponseDTO, HttpStatus.OK, SuccessMessage.CREATE);
+    }
 }

@@ -11,6 +11,7 @@ import fourmation.CommonClock.repository.EventRepository;
 import fourmation.CommonClock.repository.PersonalTimetableRepository;
 import fourmation.CommonClock.repository.TeamRepository;
 import fourmation.CommonClock.repository.TeamTimetableRepository;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -43,34 +44,7 @@ public class TimetableService {
 
         return new GetMainResponseDTO(personalTimetableList.size(), userNames);
     }
-
-    //    public EventListResponseDTO getMonthCalender(Long teamPk, String personalName){
-//        List<PersonalTimetable> personalTimetableList = getAllPersonalTimetableByTeamTimetable(teamPk);
-//        List<Event> eventList = null;
-//        for(int i=0; i<personalTimetableList.size();i++){
-//            if (personalTimetableList.get(i).getName().equals(personalName)){
-//                PersonalTimetable personalTimetable = personalTimetableList.get(i);
-//                eventList = eventRepository.findEventsByPersonalTimetable(personalTimetable);
-//                break;
-//            }
-//        }
-//        List<EventResponseDTO> eventResponseDTOList = null;
-//        for(int i=0; i<eventList.size();i++){
-//            Event event = eventList.get(i);
-//            EventResponseDTO eventResponseDTO = new EventResponseDTO(
-//                event.isAllDay(),
-//                event.getTitle(),
-//                event.getStart(),
-//                event.getEnd(),
-//                event.getBackgroundColor(),
-//                event.getTextColor()
-//            );
-//            eventResponseDTOList.add(eventResponseDTO);
-//        }
-//
-//        return new EventListResponseDTO(eventResponseDTOList);
-//    }
-    public EventListResponseDTO getMonthCalender(Long teamPk, String personalName) {
+    public EventListResponseDTO getPersonalCalender(Long teamPk, String personalName) {
         List<PersonalTimetable> personalTimetableList = getAllPersonalTimetableByTeamTimetable(teamPk);
 
         // personalName과 일치하는 PersonalTimetable 객체를 찾음
@@ -95,8 +69,30 @@ public class TimetableService {
                 event.getEnd(),
                 event.getBackgroundColor(),
                 event.getTextColor()))
-            .collect(Collectors.toList());
+            .toList();
 
+        return new EventListResponseDTO(eventResponseDTOList);
+    }
+
+    public EventListResponseDTO getTeamCalender(Long teamPk){
+        List<PersonalTimetable> personalTimetableList = getAllPersonalTimetableByTeamTimetable(teamPk);
+        List<Event> eventList = new ArrayList<>();
+
+        for (PersonalTimetable personalTimetable : personalTimetableList) {
+            List<Event> personalEventList = eventRepository.findEventsByPersonalTimetable(
+                personalTimetable);
+            eventList.addAll(personalEventList);
+        }
+
+        List<EventResponseDTO> eventResponseDTOList = eventList.stream()
+            .map(event -> new EventResponseDTO(
+                event.isAllDay(),
+                event.getTitle(),
+                event.getStart(),
+                event.getEnd(),
+                event.getBackgroundColor(),
+                event.getTextColor()))
+            .toList();
         return new EventListResponseDTO(eventResponseDTOList);
     }
 

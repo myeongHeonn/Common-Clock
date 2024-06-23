@@ -26,6 +26,7 @@ public class TeamController {
     @PostMapping("/signup")
     public ApiResponse<SuccessBody<AddTeamResponse>> signup(@RequestBody AddTeamRequest request) {
         Long teamPk = teamService.save(request);
+        teamService.createTeamTimetable(teamPk);
         AddTeamResponse addTeamResponse = new AddTeamResponse(teamPk);
         return ApiResponseGenerator.success(addTeamResponse, HttpStatus.OK, SuccessMessage.CREATE);
     }
@@ -35,4 +36,5 @@ public class TeamController {
         TeamLoginResponse teamLoginResponse = teamService.login(request);
         return ApiResponseGenerator.success(teamLoginResponse, HttpStatus.OK, SuccessMessage.LOGIN);
     }
+
 }
