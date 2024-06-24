@@ -12,10 +12,13 @@ import fourmation.CommonClock.repository.PersonalTimetableRepository;
 import fourmation.CommonClock.repository.TeamRepository;
 import fourmation.CommonClock.repository.TeamTimetableRepository;
 import jakarta.transaction.Transactional;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -78,28 +81,71 @@ public class TimetableService {
         return new EventListResponseDTO(eventResponseDTOList);
     }
 
-    public EventListResponseDTO getTeamCalender(Long teamPk){
+    private LocalDateTime parseDateTime(String dateTimeStr) {
+        try {
+            // Try parsing as ISO_OFFSET_DATE_TIME (datetime format)
+            return LocalDateTime.parse(dateTimeStr, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        } catch (Exception e) {
+            // Fallback to parsing as ISO_LOCAL_DATE (date format)
+            LocalDate date = LocalDate.parse(dateTimeStr, DateTimeFormatter.ISO_LOCAL_DATE);
+            return date.atStartOfDay(); // Set time to start of the day
+        }
+    }
+
+    public EventListResponseDTO getTeamCalendar(Long teamPk) {
+        String date = LocalDate.now().toString();
+        LocalDate currentDate = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDateTime startOfDay = currentDate.atTime(9, 0);
+        LocalDate endOfWeek = currentDate.with(DayOfWeek.SATURDAY);
+        LocalDateTime endOfDay = endOfWeek.atTime(23, 59, 59);
+
         List<PersonalTimetable> personalTimetableList = getAllPersonalTimetableByTeamTimetable(teamPk);
         List<Event> eventList = new ArrayList<>();
 
         for (PersonalTimetable personalTimetable : personalTimetableList) {
-            List<Event> personalEventList = eventRepository.findEventsByPersonalTimetable(
-                personalTimetable);
-            eventList.addAll(personalEventList);
+            List<Event> personalEventList = eventRepository.findEventsByPersonalTimetable(personalTimetable);
+            for (Event event : personalEventList) {
+                LocalDateTime eventEnd = parseDateTime(event.getEnd());
+                if (!eventEnd.isBefore(startOfDay)) {
+                    eventList.add(event);
+                }
+            }
         }
 
-        List<EventResponseDTO> eventResponseDTOList = eventList.stream()
-            .map(event -> new EventResponseDTO(
-                event.getId(),
-                event.isAllDay(),
-                event.getTitle(),
-                event.getStart(),
-                event.getEnd(),
-                event.getBackgroundColor(),
-                event.getTextColor()))
-            .toList();
-        return new EventListResponseDTO(eventResponseDTOList);
+        eventList.sort((e1, e2) -> parseDateTime(e1.getStart())
+            .compareTo(parseDateTime(e2.getStart())));
+
+        List<EventResponseDTO> teamEventList = new ArrayList<>();
+
+        LocalDateTime currentTime = startOfDay;
+
+        for (Event event : eventList) {
+            LocalDateTime eventStart = parseDateTime(event.getStart());
+            LocalDateTime eventEnd = parseDateTime(event.getEnd());
+
+            if (eventStart.isAfter(currentTime)) {
+                teamEventList.add(new EventResponseDTO(
+                    null, false, "No Event", currentTime.toString(), eventStart.toString(), "#00e676", "#FFFFFF"
+                ));
+            }
+
+//            teamEventList.add(new EventResponseDTO(
+//                event.getId(), event.isAllDay(), event.getTitle(), event.getStart(), event.getEnd(),
+//                "#f44336", event.getTextColor()
+//            ));
+
+            currentTime = eventEnd.isAfter(currentTime) ? eventEnd : currentTime;
+        }
+
+        if (currentTime.isBefore(endOfDay)) {
+            teamEventList.add(new EventResponseDTO(
+                null, false, "No Event", currentTime.toString(), endOfDay.toString(), "#00e676", "#FFFFFF"
+            ));
+        }
+
+        return new EventListResponseDTO(teamEventList);
     }
+
     @Transactional
     public void deletePersonalTimetable(Long teamPk, String personalName) {
         List<PersonalTimetable> personalTimetableList = getAllPersonalTimetableByTeamTimetable(teamPk);

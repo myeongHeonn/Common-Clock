@@ -56,7 +56,7 @@ public class TimetableController {
 
     @GetMapping("/team/{teamPk}")
     public ApiResponse<SuccessBody<EventListResponseDTO>> getTeamCalendar(@PathVariable Long teamPk){
-        EventListResponseDTO eventListResponseDTO = timetableService.getTeamCalender(teamPk);
+        EventListResponseDTO eventListResponseDTO = timetableService.getTeamCalendar(teamPk);
         return ApiResponseGenerator.success(eventListResponseDTO, HttpStatus.OK, SuccessMessage.CREATE);
     }
 }
