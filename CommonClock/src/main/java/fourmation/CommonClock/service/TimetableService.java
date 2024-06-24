@@ -125,7 +125,7 @@ public class TimetableService {
 
             if (eventStart.isAfter(currentTime)) {
                 teamEventList.add(new EventResponseDTO(
-                    null, false, "No Event", currentTime.toString(), eventStart.toString(), "#00e676", "#FFFFFF"
+                    null, false, "No Event", currentTime.toString(), eventStart.toString(), "#81c784", "#FFFFFF"
                 ));
             }
 
@@ -139,7 +139,7 @@ public class TimetableService {
 
         if (currentTime.isBefore(endOfDay)) {
             teamEventList.add(new EventResponseDTO(
-                null, false, "No Event", currentTime.toString(), endOfDay.toString(), "#00e676", "#FFFFFF"
+                null, false, "No Event", currentTime.toString(), endOfDay.toString(), "#81c784", "#FFFFFF"
             ));
         }
 
